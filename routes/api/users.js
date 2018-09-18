@@ -3,6 +3,7 @@ const router = express.Router();
 const {User} = require('../../models/User');
 const gravatar = require('gravatar');
 const bcrypt = require('bcryptjs');
+const passport = require('passport');
 
 /**
  * @route  GET api/users/test
@@ -64,6 +65,19 @@ router.post('/login', async (req, res) => {
   } else {
     res.status(400).json({password: 'Incorrect password'});
   }
+});
+
+/**
+ * @route  GET api/users/current
+ * @desc   Returns current user
+ * @access private
+ */
+router.get('/current', passport.authenticate('jwt', {session: false}), (req, res) => {
+    res.json({
+      id: req.user.id,
+      name: req.user.name,
+      email: req.user.email
+    });
 });
 
 module.exports = router;
