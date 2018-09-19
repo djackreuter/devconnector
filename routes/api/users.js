@@ -1,9 +1,13 @@
 const express = require('express');
 const router = express.Router();
-const {User} = require('../../models/User');
+const { User } = require('../../models/User');
 const gravatar = require('gravatar');
 const bcrypt = require('bcryptjs');
 const passport = require('passport');
+
+// load validation
+const { validateRegisterInput } = require('../../validation/register');
+const { validateLoginInput } = require('../../validation/login');
 
 /**
  * @route  GET api/users/test
@@ -20,9 +24,14 @@ router.get('/test', (req, res) => {
  * @access public
  */
 router.post('/register', async (req, res) => {
-  const user = await User.findOne({ email: req.body.email });
-  if (user) {
-    return res.status(400).json({email: 'Email already exists'});
+  const { errors, isValid } = validateRegisterInput(req.body);
+  if (!isValid) {
+    return res.status(400).json(errors);
+  }
+  const emailExists = await User.findOne({ email: req.body.email });
+  if (emailExists) {
+    errors.email = 'Email already exists'
+    return res.status(400).json(errors);
   } else {
     const avatar = gravatar.url(req.body.email, {
       s: '200',
@@ -50,11 +59,16 @@ router.post('/register', async (req, res) => {
  * @access public
  */
 router.post('/login', async (req, res) => {
+  const { errors, isValid } = validateLoginInput(req.body);
   const email = req.body.email;
   const password = req.body.password;
+  if (!isValid) {
+    return res.status(400).json(errors);
+  }
   let user = await User.findOne({ email });
   if (!user) {
-    res.status(404).json({email: 'User not found'});
+    errors.email = 'User not found'
+    res.status(404).json(errors);
   }
   let correctPassword = await bcrypt.compare(password, user.password);
   if (correctPassword) {
@@ -63,7 +77,8 @@ router.post('/login', async (req, res) => {
       res.json({ token: `Bearer ${token}` });
     }
   } else {
-    res.status(400).json({password: 'Incorrect password'});
+    errors.password = 'Incorrect password'
+    res.status(400).json(errors);
   }
 });
 
