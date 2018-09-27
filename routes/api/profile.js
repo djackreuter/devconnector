@@ -5,6 +5,7 @@ const passport = require('passport');
 
 const { Profile } = require('../../models/Profile');
 const { User } = require('../../models/User');
+const { validateProfileInput } = require('../../validation/profile');
 
 /**
  * @route  GET api/profile/test
@@ -23,11 +24,13 @@ router.get('/test', (req, res) => {
 router.get('/', passport.authenticate('jwt', { session: false }), 
 (req, res) => {
   const errors = {};
-  Profile.findOne({ user: req.user.id }).then((profile) => {
-    if (!profile) {
-      errors.noprofile = 'Profile does not exist'
-      return res.status(404).json(errors);
-    }
+  Profile.findOne({ user: req.user.id })
+    .populate('user', ['name', 'avatar'])
+    .then((profile) => {
+      if (!profile) {
+        errors.noprofile = 'Profile does not exist'
+        return res.status(404).json(errors);
+      }
     return res.json(profile);
   }).catch((err) => res.status(400).json(err));
 });
@@ -39,6 +42,12 @@ router.get('/', passport.authenticate('jwt', { session: false }),
  */
 router.post('/', passport.authenticate('jwt', { session: false }), 
 (req, res) => {
+  const { errors, isValid } = validateProfileInput(req.body);
+
+  if (!isValid) {
+    return res.status(400).json(errors);
+  }
+
   const profileFields = {};
   profileFields.user = req.user.id;
   if (req.body.handle) profileFields.handle = req.body.handle;

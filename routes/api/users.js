@@ -70,15 +70,19 @@ router.post('/login', async (req, res) => {
     errors.email = 'User not found'
     res.status(404).json(errors);
   }
-  let correctPassword = await bcrypt.compare(password, user.password);
-  if (correctPassword) {
-    let token = await user.generateAuthToken();
-    if (token) {
-      res.json({ token: `Bearer ${token}` });
+  try {
+    let correctPassword = await bcrypt.compare(password, user.password);
+    if (correctPassword) {
+      let token = await user.generateAuthToken();
+      if (token) {
+        res.json({ token: `Bearer ${token}` });
+      }
+    } else {
+      errors.password = 'Incorrect password'
+      res.status(400).json(errors);
     }
-  } else {
-    errors.password = 'Incorrect password'
-    res.status(400).json(errors);
+  } catch (err) {
+    return console.log(err);
   }
 });
 
