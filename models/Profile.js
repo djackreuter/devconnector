@@ -43,7 +43,7 @@ const ProfileSchema = new mongoose.Schema({
         type: String,
         required: true
       }, 
-      loaction: {
+      location: {
         type: String,
         required: true
       },
