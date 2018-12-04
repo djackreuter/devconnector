@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { loginUser } from '../../actions/authActions';
 
-export default class Login extends Component {
+class Login extends Component {
   constructor() {
     super();
     this.state = {
@@ -27,6 +30,7 @@ export default class Login extends Component {
   }
 
   render() {
+    const { errors } = this.state;
     return (
       <div className="login">
         <div className="container">
@@ -63,3 +67,16 @@ export default class Login extends Component {
     )
   }
 }
+
+Login.propTypes = {
+  loginUser: PropTypes.func.isRequired,
+  auth: PropTypes.object.isRequired,
+  errors: PropTypes.object.isRequired
+}
+
+const mapStateToProps = (state) => ({
+  auth: state.auth,
+  errors: state.errors
+});
+
+export default connect(mapStateToProps, { loginUser })(Login)
