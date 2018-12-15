@@ -5,9 +5,28 @@ import PropTypes from 'prop-types';
 import { logoutUser } from '../../actions/authActions';
 
 class Navbar extends Component {
+  onLogoutClick(e) {
+    e.preventDefault();
+    this.props.logoutUser();
+  }
+
   render() {
     const { isAuthenticated, user } = this.props.auth;
     const authLinks = (
+      <ul className="navbar-nav ml-auto">
+        <li className="nav-item">
+          <a 
+            href="#" 
+            onClick={this.onLogoutClick.bind(this)} 
+            className="nav-link"
+          >
+            <img src={user.avatar} className="rounded-circle" alt={user.name} style={{width: '25px', marginRight: '5px'}} title="You must have a gravatar connected to your email to display image"/>
+            Logout
+          </a>
+        </li>
+      </ul>
+    );
+    const guestLinks = (
       <ul className="navbar-nav ml-auto">
         <li className="nav-item">
           <Link className="nav-link" to="/register">Sign Up</Link>
@@ -31,7 +50,7 @@ class Navbar extends Component {
                 </Link>
               </li>
             </ul>
-              {!isAuthenticated && authLinks}
+              {isAuthenticated ? authLinks : guestLinks}
           </div>
         </div>
       </nav>
