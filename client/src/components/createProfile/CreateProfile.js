@@ -8,6 +8,7 @@ import TextAreaFieldGroup from '../common/TextAreaFieldGroup';
 import InputGroup from '../common/InputGroup';
 import SelectListGroup from '../common/SelectListGroup';
 import { createProfile } from '../../actions/profileActions';
+import isEmpty from '../../validation/is-empty';
 
 class CreateProfile extends Component {
   constructor(props) {
@@ -34,7 +35,7 @@ class CreateProfile extends Component {
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
-    if (nextProps.errors) {
+    if (!isEmpty(nextProps.errors)) {
       return {
         errors: nextProps.errors
       }
