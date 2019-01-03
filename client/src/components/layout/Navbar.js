@@ -17,14 +17,17 @@ class Navbar extends Component {
     const authLinks = (
       <ul className="navbar-nav ml-auto">
         <li className="nav-item">
-          <a 
-            href="#" 
+          <Link className="nav-link" to="/dashboard">Dashboard</Link>
+        </li>
+        <li className="nav-item">
+          <button 
+            type="button" 
             onClick={this.onLogoutClick.bind(this)} 
-            className="nav-link"
+            className="nav-link btn btn-link"
           >
             <img src={user.avatar} className="rounded-circle" alt={user.name} style={{width: '25px', marginRight: '5px'}} title="You must have a gravatar connected to your email to display image"/>
             Logout
-          </a>
+          </button>
         </li>
       </ul>
     );

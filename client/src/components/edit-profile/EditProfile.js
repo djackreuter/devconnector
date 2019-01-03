@@ -38,15 +38,12 @@ class EditProfile extends Component {
     this.props.getCurrentProfile();
   }
 
-  static getDerivedStateFromProps(nextProps, prevState) {
-    if (!isEmpty(nextProps.errors)) {
-      console.log('errors', nextProps.errors)
-      return {
-        errors: nextProps.errors
-      }
+  componentDidUpdate(prevProps) {
+    if (prevProps.errors !== this.props.errors) {
+      this.setState({ errors: this.props.errors })
     }
-    if (!isEmpty(nextProps.profile.profile)) {
-      const profile = nextProps.profile.profile;
+    if (this.props.profile.profile) {
+      const profile = this.props.profile.profile;
       const skillsCSV = profile.skills.join(',');
       profile.company = !isEmpty(profile.company) ? profile.company : '';
       profile.website = !isEmpty(profile.website) ? profile.website : '';
@@ -60,23 +57,24 @@ class EditProfile extends Component {
       profile.youtube = !isEmpty(profile.social.youtube) ? profile.social.youtube : '';
       profile.instagram = !isEmpty(profile.social.instagram) ? profile.social.instagram : '';
 
-      return {
-        handle: profile.handle,
-        company: profile.company,
-        website: profile.website,
-        location: profile.location,
-        status: profile.status,
-        skills: skillsCSV,
-        githubusername: profile.githubusername,
-        bio: profile.bio,
-        twitter: profile.twitter,
-        facebook: profile.facebook,
-        linkedin: profile.linkedin,
-        youtube: profile.youtube,
-        instagram: profile.instagram,
+      if (prevProps.profile !== this.props.profile) {
+        this.setState({
+          handle: profile.handle,
+          company: profile.company,
+          website: profile.website,
+          location: profile.location,
+          status: profile.status,
+          skills: skillsCSV,
+          githubusername: profile.githubusername,
+          bio: profile.bio,
+          twitter: profile.twitter,
+          facebook: profile.facebook,
+          linkedin: profile.linkedin,
+          youtube: profile.youtube,
+          instagram: profile.instagram
+        })
       }
     }
-    return null;
   }
 
   onSubmit(e) {
