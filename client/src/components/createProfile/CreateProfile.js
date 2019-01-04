@@ -34,13 +34,10 @@ class CreateProfile extends Component {
     this.onSubmit = this.onSubmit.bind(this);
   }
 
-  static getDerivedStateFromProps(nextProps, prevState) {
-    if (!isEmpty(nextProps.errors)) {
-      return {
-        errors: nextProps.errors
-      }
+  componentDidUpdate(prevProps) {
+    if (prevProps.errors !== this.props.errors) {
+      this.setState({ errors: this.props.errors })
     }
-    return null;
   }
 
   onSubmit(e) {
