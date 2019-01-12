@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
 const passport = require('passport');
+const request = require('request');
 
 const { Profile } = require('../../models/Profile');
 const { User } = require('../../models/User');
@@ -94,6 +95,32 @@ router.get('/user/:user_id', async (req, res) => {
   } catch (err) {
     return res.status(400).json(err);
   }
+});
+
+/**
+ * @route  GET api/profile/github/:username/:count/:sort
+ * @desc   get github repos
+ * @access public
+ */
+router.get('/github/:username/:count/:sort', (req, res) => {
+  const username = req.params.username;
+  const count = req.params.count;
+  const sort = req.params.sort;
+  const clientId = process.env.CLIENT_ID;
+  const clientSecret = process.env.CLIENT_SECRET;
+  const options = {
+    url: `https://api.github.com/users/${username}/repos?per_page=${count}&sort=${sort}&client_id=${clientId}&client_secret=${clientSecret}`,
+    headers: {
+      "User-Agent": "request"
+    }
+  };
+  const callback = (err, response, body) => {
+    if (!err && response.statusCode == 200) {
+      const info = JSON.parse(body);
+      res.json(info);
+    }
+  }
+  request(options, callback);
 });
 
 /**
