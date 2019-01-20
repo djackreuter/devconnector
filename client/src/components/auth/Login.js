@@ -27,19 +27,14 @@ class Login extends Component {
     }
   }
 
-  static getDerivedStateFromProps(nextProps, prevState) {
-    if (nextProps.errors) {
-      return {
-        errors: nextProps.errors
-      }
-    }
-    return null;
-  }
-
-  componentDidUpdate(prevState) {
+  componentDidUpdate(prevProps) {
     if (this.props.auth.isAuthenticated) {
       this.setState({isAuthenticated: this.props.auth.isAuthenticated})
       this.props.history.push('/dashboard')
+    }
+
+    if (prevProps.errors !== this.props.errors) {
+      this.setState({ errors: this.props.errors });
     }
   }
 
